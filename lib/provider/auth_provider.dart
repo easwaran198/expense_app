@@ -3,13 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// FirebaseAuth instance provider
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
-// Firestore instance provider
 final firestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
-// Authentication state provider
 final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) => AuthNotifier(ref));
 
 class AuthNotifier extends StateNotifier<User?> {

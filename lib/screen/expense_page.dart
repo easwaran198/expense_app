@@ -4,6 +4,7 @@ import 'package:expense_app/provider/auth_provider.dart';
 import 'package:expense_app/provider/category_provider.dart';
 import 'package:expense_app/provider/expense_provider.dart';
 import 'package:expense_app/provider/theme_provider.dart';
+import 'package:expense_app/screen/chart_page.dart';
 import 'package:expense_app/screen/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -72,6 +73,12 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Expense Tracker"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ChartPage()));
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(isDarkMode ? Icons.dark_mode : Icons.light_mode),
@@ -250,7 +257,7 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
 
   Future<void> logout() async {
     setState(() => isLoading = true);
-    final auth = ref.read(authProvider.notifier);
+    final auth = ref.read(authProvider_.notifier);
     final error = await auth.logout();
 
     setState(() => isLoading = false);

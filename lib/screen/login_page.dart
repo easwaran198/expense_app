@@ -18,7 +18,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Future<void> login() async {
     setState(() => isLoading = true);
-    final auth = ref.read(authProvider.notifier);
+    final auth = ref.read(authProvider_.notifier);
     final error = await auth.login(emailController.text, passwordController.text);
 
     setState(() => isLoading = false);

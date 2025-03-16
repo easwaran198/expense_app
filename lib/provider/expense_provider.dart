@@ -1,6 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_app/provider/auth_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// Firestore instance provider
+final firestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
+
+// Firebase Auth provider to get the current user
+final authProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
 final expenseProvider = StateNotifierProvider<ExpenseNotifier, List<Map<String, dynamic>>>((ref) {
   return ExpenseNotifier(ref)..fetchExpenses(); // Fetch expenses on initialization
@@ -14,10 +21,17 @@ class ExpenseNotifier extends StateNotifier<List<Map<String, dynamic>>> {
   double totalExpense = 0.0; // Store total expense
   Map<String, double> dailyExpenses = {}; // Store expenses per day
 
+  // ✅ Fetch expenses for the logged-in user
   Future<void> fetchExpenses() async {
     try {
-      final querySnapshot =
-      await ref.read(firestoreProvider).collection('expenses').get();
+      final user = ref.read(authProvider).currentUser;
+      if (user == null) return; // Ensure user is logged in
+
+      final querySnapshot = await ref
+          .read(firestoreProvider)
+          .collection('expenses')
+          .where('userId', isEqualTo: user.uid) // Fetch only user's expenses
+          .get();
 
       List<Map<String, dynamic>> expenses = querySnapshot.docs.map((doc) {
         var data = doc.data() as Map<String, dynamic>;
@@ -25,7 +39,7 @@ class ExpenseNotifier extends StateNotifier<List<Map<String, dynamic>>> {
         return data;
       }).toList();
 
-      // Calculate total and daily expenses
+      // ✅ Calculate total and daily expenses
       totalExpense = 0.0;
       dailyExpenses = {};
 
@@ -45,14 +59,18 @@ class ExpenseNotifier extends StateNotifier<List<Map<String, dynamic>>> {
     }
   }
 
-
+  // ✅ Add expense with user ID
   Future<void> addExpense(String category, double amount, String description) async {
     try {
+      final user = ref.read(authProvider).currentUser;
+      if (user == null) return; // Ensure user is logged in
+
       await ref.read(firestoreProvider).collection('expenses').add({
         'category': category,
         'amount': amount,
         'description': description,
         'date': Timestamp.now(),
+        'userId': user.uid, // Associate expense with the user
       });
 
       fetchExpenses(); // Refresh state after adding

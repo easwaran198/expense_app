@@ -7,7 +7,7 @@ final firebaseAuthProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instan
 
 final firestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
-final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) => AuthNotifier(ref));
+final authProvider_ = StateNotifierProvider<AuthNotifier, User?>((ref) => AuthNotifier(ref));
 
 class AuthNotifier extends StateNotifier<User?> {
   final Ref ref;

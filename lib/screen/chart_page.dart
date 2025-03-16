@@ -37,7 +37,8 @@ class ChartPage extends ConsumerWidget {
         child: Column(
           children: [
             Expanded(
-              child: PieChart(
+              child:
+              PieChart(
                 PieChartData(
                   sections: categoryExpenses.entries.map((entry) {
                     return PieChartSectionData(

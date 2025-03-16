@@ -1,3 +1,5 @@
+import 'package:expense_app/provider/category_provider.dart';
+import 'package:expense_app/provider/expense_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +9,7 @@ final firebaseAuthProvider = Provider<FirebaseAuth>((ref) => FirebaseAuth.instan
 
 final firestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
 
-final authProvider_ = StateNotifierProvider<AuthNotifier, User?>((ref) => AuthNotifier(ref));
+final authProvider = StateNotifierProvider<AuthNotifier, User?>((ref) => AuthNotifier(ref));
 
 class AuthNotifier extends StateNotifier<User?> {
   final Ref ref;
@@ -61,8 +63,13 @@ class AuthNotifier extends StateNotifier<User?> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('userId', user.uid);
       state = user;
+
+      // Trigger re-fetching data for the new user
+      ref.read(expenseProvider.notifier).fetchExpenses();
+      ref.read(categoryProvider.notifier).fetchCategories();
     }
   }
+
 
   Future<void> logout() async {
     try {
@@ -70,8 +77,13 @@ class AuthNotifier extends StateNotifier<User?> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('userId');
       state = null;
+
+      // Reset other providers
+      ref.read(expenseProvider.notifier).state = [];
+      ref.read(categoryProvider.notifier).state = [];
     } catch (e) {
       print("Error logging out: $e");
     }
   }
+
 }

@@ -72,13 +72,13 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Expense Tracker"),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back), // Back button icon
           onPressed: () {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ChartPage()));
           },
         ),
+        title: Text("Expense Tracker"),
         actions: [
           IconButton(
             icon: Icon(isDarkMode ? Icons.dark_mode : Icons.light_mode),
@@ -257,7 +257,7 @@ class _ExpenseScreenState extends ConsumerState<ExpenseScreen> {
 
   Future<void> logout() async {
     setState(() => isLoading = true);
-    final auth = ref.read(authProvider_.notifier);
+    final auth = ref.read(authProvider.notifier);
     final error = await auth.logout();
 
     setState(() => isLoading = false);

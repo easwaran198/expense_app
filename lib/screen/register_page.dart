@@ -28,7 +28,7 @@ class RegisterPage extends ConsumerWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final auth = ref.read(authProvider_.notifier);
+                final auth = ref.read(authProvider.notifier);
                 String? error = await auth.register(
                   emailController.text.trim(),
                   passwordController.text.trim(),
